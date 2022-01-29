@@ -1,22 +1,35 @@
-import { Dim, Wrapper } from './style';
+import { CloseBtn, Dim, Wrapper } from './style';
 import ReactDOM from 'react-dom';
-import { useEffect, useMemo } from 'react';
+import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo } from 'react';
+import { useClickAway } from './useClickAway';
+
 interface Props {
   children: React.ReactNode;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
-const ModalBase = ({ children }: Props) => {
+const ModalBase = ({ children, setIsModalOpen }: Props) => {
+  const handleCloseBtn = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+  const ref = useClickAway(handleCloseBtn);
   return (
     <Dim>
-      <Wrapper>{children}</Wrapper>
+      <Wrapper ref={ref as MutableRefObject<HTMLDivElement>} className="modal">
+        <CloseBtn type="button" onClick={handleCloseBtn}>
+          x
+        </CloseBtn>
+        {children}
+      </Wrapper>
     </Dim>
   );
 };
-const Modal = ({ children }: Props) => {
+const Modal = ({ children, setIsModalOpen }: Props) => {
   const el = useMemo(() => {
     const $el = document.createElement('div');
     $el.className = 'portal-modal';
     return $el;
   }, []);
+
   useEffect(() => {
     document.body.appendChild(el);
     return () => {
@@ -24,6 +37,9 @@ const Modal = ({ children }: Props) => {
     };
   });
 
-  return ReactDOM.createPortal(<ModalBase>{children}</ModalBase>, el);
+  return ReactDOM.createPortal(
+    <ModalBase setIsModalOpen={setIsModalOpen}>{children}</ModalBase>,
+    el,
+  );
 };
 export default Modal;
