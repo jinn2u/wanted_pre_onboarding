@@ -12,7 +12,18 @@ export const Dim = styled.div`
   background: rgba(0, 0, 0, 0.75);
 `;
 export const Wrapper = styled.div`
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   background-color: white;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+export const CloseBtn = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 20px;
 `;
