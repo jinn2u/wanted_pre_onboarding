@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { EraseBtn, Wrapper } from './style';
 
 interface Props {

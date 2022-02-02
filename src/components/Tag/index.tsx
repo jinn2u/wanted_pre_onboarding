@@ -26,9 +26,13 @@ const Tag = ({ width = 400 }: Props) => {
   return (
     <>
       <Wrapper width={width}>
-        {words.map((word, idx) => (
-          <WordBox key={idx} word={word} onErase={() => onErase(idx)} />
-        ))}
+        <ul>
+          {words.map((word, idx) => (
+            <li key={idx}>
+              <WordBox word={word} onErase={() => onErase(idx)} />
+            </li>
+          ))}
+        </ul>
         <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
       </Wrapper>
     </>

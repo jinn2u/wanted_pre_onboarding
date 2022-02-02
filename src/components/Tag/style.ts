@@ -11,9 +11,18 @@ export const Wrapper = styled.div<{ width: number | string }>`
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 `;
 
 export const Input = styled.input`
+  min-width: 150px;
   box-sizing: border-box;
   border-radius: 10px;
   border: none;
