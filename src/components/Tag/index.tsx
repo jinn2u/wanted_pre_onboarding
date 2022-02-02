@@ -9,6 +9,7 @@ interface Props {
 }
 const Tag = ({ width = 400 }: Props) => {
   const [words, setWords] = useState<string[]>([]);
+
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     const { value } = e.target as HTMLInputElement;
     if (!value.length || e.key !== 'Enter') {
@@ -18,11 +19,15 @@ const Tag = ({ width = 400 }: Props) => {
     (e.target as HTMLInputElement).value = '';
   }, []);
 
+  const onErase = useCallback((idx: number) => {
+    setWords((prevWords) => prevWords.filter((_, index) => idx !== index));
+  }, []);
+
   return (
     <>
       <Wrapper width={width}>
         {words.map((word, idx) => (
-          <WordBox key={idx} word={word} />
+          <WordBox key={idx} word={word} onErase={() => onErase(idx)} />
         ))}
         <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
       </Wrapper>
