@@ -22,11 +22,9 @@ const Tag = ({ width = 400 }: Props) => {
     <>
       <Wrapper width={width}>
         {words.map((word, idx) => (
-          <div key={idx}>{word}</div>
+          <WordBox key={idx} word={word} />
         ))}
         <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
-        <WordBox word="texts" />
-        <WordBox word="texts" />
       </Wrapper>
     </>
   );
