@@ -1,4 +1,4 @@
-# 모달 컴포넌트
+# Modal 컴포넌트
 
 모달은 createPortal을 사용해서 만들어 주었습니다.
 
@@ -54,3 +54,55 @@ useLayoutEffect의 경우 layout은 되었지만 Paint되기전에 실행이 됩
 
 ## 사용방법
 모달은 state가 true일 때 렌더링이 됩니다. 따라서 모달을 끄기 위해서는 모달의 state를 변경하는 setState를 ```setIsModalOpen```prop으로 전달하여야 합니다. 또한 모달 내부는 children으로 꾸밀 수 있습니다.
+
+<br>
+
+# Toggle 컴포넌트
+
+토글의 경우 구조에 대해 고민을 하다가 Material UI에서 아래와 같은 형태로 사용하고 있는것을 확인했습니다. 따라서 저도 아래와 같은 형태로 만들고자 했습니다.
+
+```tsx
+<Tabs>
+	<tab/>
+</Tabs>
+```
+
+Tabs에는 Children을 받아서 렌더링을 합니다. 따라서 children에 들어있는 자식들이 진짜 tab컴포넌트인지 확인할 필요가 있습니다. 따라서 ```filterValidChildren``` 메서드를 통해 한번 필터링을 거쳐주었습니다.
+
+## 어려웠던 부분
+
+tab의 역할은 페이지의 이동도 있지만 별도로 어떠한 동작을 수행하고 페이지의 이동을 하고 싶을 수 도 있다고 생각했습니다. 
+
+즉, 기본 동작인 tab의 색깔이 바뀌는 이벤트는 사용자가 몰라도 자동으로 동작해야하며, 사용자가 원하는 이벤트는 받을 수 있어야 합니다. 
+
+따라서 내부의 onClick함수에서 외부의 handleClick함수를 실행함과 동시에, 현재 tab이 클릭되었는지 확인할 수 있는 상태인 isActive를 업데이트해 주었습니다.
+
+## **사용방법**
+
+```tsx
+<Tab bgColor="lightgray">
+    <TabItem handleClick={() => setTabs(0)}>Tab1 Tab1</TabItem>
+    <TabItem handleClick={() => setTabs(1)}>Tab2</TabItem>
+    <TabItem handleClick={() => setTabs(2)}>Tab3</TabItem>
+</Tab>
+```
+
+위와 같은 형태로 사용할 수 있습니다. tab의 상태를 저장한 다음 handleClick함수에 이벤트를 전달해준다면, 어떤 탭이 선택되었는지  상위 컴포넌트에서 확인할 수 있습니다.
+
+# Tag 컴포넌트
+
+div로 뼈대를 만들고 내부에 wordList와 input을 만들어주면 구현이 됩니다.
+
+## 어려웠던 부분
+
+처음에 input안에 position:absolute를 통해 wordList들을 넣어주려했습니다. 하지만 그렇게 하더라도 input의 커서는 고정되어있기 때문에 wordList들에 가려지게 됩니다. 따라서 위와 같은 방법으로 변경하게 되었습니다.
+
+## **사용방법**
+
+```tsx
+<Tag width={200} setWordList={setWordList} wordList={wordList} />
+```
+
+위와 같은 형태로 사용할 수 있습니다. width는 optional로 default는 400px입니다.
+
+props로 setWordList와 wordList를 넘겨주어야 합니다.
