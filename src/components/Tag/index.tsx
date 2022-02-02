@@ -1,17 +1,30 @@
 import { Input, Wrapper } from './style';
-import React from 'react';
+import React, { KeyboardEvent, useCallback, useState } from 'react';
 import WordBox from './WrodBox';
 
 interface Props {
   width?: number | string;
-  height?: number;
+
   fontSize?: number;
 }
-const Tag = ({ width = 400, height = 50 }: Props) => {
+const Tag = ({ width = 400 }: Props) => {
+  const [words, setWords] = useState<string[]>([]);
+  const handleKeyUp = useCallback((e: KeyboardEvent) => {
+    const { value } = e.target as HTMLInputElement;
+    if (!value.length || e.key !== 'Enter') {
+      return;
+    }
+    setWords((prevWords) => [...prevWords, value]);
+    (e.target as HTMLInputElement).value = '';
+  }, []);
+
   return (
     <>
-      <Wrapper width={width} height={height}>
-        <Input height={height} placeholder="Please enter to add tags" />
+      <Wrapper width={width}>
+        {words.map((word, idx) => (
+          <div key={idx}>{word}</div>
+        ))}
+        <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
         <WordBox word="texts" />
         <WordBox word="texts" />
       </Wrapper>
