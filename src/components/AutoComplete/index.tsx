@@ -18,27 +18,27 @@ const AutoComplete = ({ width = 300 }: Props) => {
       const filteredCashes = cashed
         .filter((cash) => cash.includes(value))
         .map((word) => ({ word, isSelected: false }));
-
       setMatched(filteredCashes);
     },
     [cashed],
   );
   const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'ArrowDown') {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
       return;
     }
+    const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
+    let nextIdx = 0;
     if (e.key === 'ArrowDown') {
-      const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-      const nextIdx = idx === -1 ? 0 : idx === matched.length - 1 ? 0 : idx + 1;
-
-      setInputVal(matched[nextIdx].word);
-
-      setMatched((prevMatched) =>
-        prevMatched.map((match, index) =>
-          index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
-        ),
-      );
+      nextIdx = idx === -1 ? 0 : idx === matched.length - 1 ? 0 : idx + 1;
+    } else {
+      nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
     }
+    setInputVal(matched[nextIdx].word);
+    setMatched((prevMatched) =>
+      prevMatched.map((match, index) =>
+        index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
+      ),
+    );
   };
   return (
     <Wrapper>
