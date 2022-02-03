@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useClickAway } from '../Modal/useClickAway';
 import { Input, Li, Ul, Wrapper } from './style';
 
 interface Props {
@@ -15,14 +16,19 @@ const AutoComplete = ({ width = 300 }: Props) => {
   const [cashed, setCashed] = useState(['a', 'ab', 'abb', 'abbb', 'abbbb', 'abbbbb', 'abbbbbb']);
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
   const [inputVal, setInputVal] = useState('');
-  const ulRef = useRef<HTMLUListElement>(null);
+  const [showMatched, setShowMatched] = useState(false);
+
+  const closeMatchField = useCallback(() => {
+    setShowMatched(false);
+  }, []);
+  const ulRef = useClickAway(closeMatchField);
+
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       setInputVal(value);
-      if (!ulRef.current) return;
       if (!value.length) {
-        ulRef.current.style.display = 'none';
+        setShowMatched(false);
         return setMatched([]);
       }
       const filteredCashes = cashed
@@ -30,9 +36,10 @@ const AutoComplete = ({ width = 300 }: Props) => {
         .map((word) => ({ word, isSelected: false }));
       setMatched(filteredCashes);
       if (filteredCashes.length) {
-        return (ulRef.current.style.display = 'block');
+        setShowMatched(true);
+      } else {
+        setShowMatched(false);
       }
-      ulRef.current.style.display = 'none';
     },
     [cashed],
   );
@@ -57,13 +64,15 @@ const AutoComplete = ({ width = 300 }: Props) => {
   return (
     <Wrapper>
       <Input width={width} onChange={handleChange} onKeyUp={handleKeyUp} value={inputVal} />
-      <Ul ref={ulRef as MutableRefObject<HTMLUListElement>} width={width}>
-        {matched.map(({ word, isSelected }) => (
-          <Li isSelected={isSelected} key={word}>
-            {word}
-          </Li>
-        ))}
-      </Ul>
+      {showMatched && (
+        <Ul ref={ulRef as MutableRefObject<HTMLUListElement>} width={width}>
+          {matched.map(({ word, isSelected }) => (
+            <Li isSelected={isSelected} key={word}>
+              {word}
+            </Li>
+          ))}
+        </Ul>
+      )}
     </Wrapper>
   );
 };

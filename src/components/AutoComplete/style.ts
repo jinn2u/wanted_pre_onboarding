@@ -23,7 +23,6 @@ export const Ul = styled.ul<{ width: number }>`
   list-style: none;
   position: absolute;
   z-index: 100;
-  display: none;
 `;
 
 export const Li = styled.li<{ isSelected: boolean }>`
