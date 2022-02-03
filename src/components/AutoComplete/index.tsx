@@ -5,21 +5,21 @@ interface Props {
   width?: number;
 }
 const AutoComplete = ({ width = 300 }: Props) => {
-  const [cashed, setCashed] = useState(['a', 'ab', 'b']);
+  const [cashed, setCashed] = useState(['a', 'ab', 'abb', 'abbb', 'abbbb', 'abbbbb', 'abbbbbb']);
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
-
+  const [inputVal, setInputVal] = useState('');
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
+      setInputVal(value);
       if (!value.length) {
-        return setMatched([]);
+        return;
       }
       const filteredCashes = cashed
         .filter((cash) => cash.includes(value))
         .map((word) => ({ word, isSelected: false }));
 
       setMatched(filteredCashes);
-      console.log('click');
     },
     [cashed],
   );
@@ -27,22 +27,22 @@ const AutoComplete = ({ width = 300 }: Props) => {
     if (e.key !== 'ArrowDown') {
       return;
     }
-    const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-    let changeMatch;
-    if (idx === -1) {
-      changeMatch = matched.map((match, index) =>
-        index === 0 ? { ...match, isSelected: true } : { ...match, isSelected: false },
-      );
-    } else {
-      changeMatch = matched.map((match, index) =>
-        index === idx + 1 ? { ...match, isSelected: true } : { ...match, isSelected: false },
+    if (e.key === 'ArrowDown') {
+      const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
+      const nextIdx = idx === -1 ? 0 : idx === matched.length - 1 ? 0 : idx + 1;
+
+      setInputVal(matched[nextIdx].word);
+
+      setMatched((prevMatched) =>
+        prevMatched.map((match, index) =>
+          index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
+        ),
       );
     }
-    setMatched(changeMatch);
   };
   return (
     <Wrapper>
-      <Input width={width} onChange={handleChange} onKeyUp={handleKeyUp} />
+      <Input width={width} onChange={handleChange} onKeyUp={handleKeyUp} value={inputVal} />
       <Ul width={width}>
         {matched.map(({ word, isSelected }) => (
           <Li isSelected={isSelected} key={word}>
