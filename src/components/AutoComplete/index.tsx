@@ -47,6 +47,9 @@ const AutoComplete = ({ width = 300 }: Props) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
       return;
     }
+
+    if (!matched.length) return;
+    setShowMatched(true);
     const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
     let nextIdx = 0;
     if (e.key === 'ArrowDown') {
@@ -61,13 +64,21 @@ const AutoComplete = ({ width = 300 }: Props) => {
       ),
     );
   };
+  const handleLiClick = (word: string) => {
+    setShowMatched(false);
+    setInputVal(word);
+    const filteredCashes = cashed
+      .filter((cash) => cash.includes(word))
+      .map((word) => ({ word, isSelected: false }));
+    setMatched(filteredCashes);
+  };
   return (
     <Wrapper>
       <Input width={width} onChange={handleChange} onKeyUp={handleKeyUp} value={inputVal} />
       {showMatched && (
         <Ul ref={ulRef as MutableRefObject<HTMLUListElement>} width={width}>
           {matched.map(({ word, isSelected }) => (
-            <Li isSelected={isSelected} key={word}>
+            <Li isSelected={isSelected} key={word} onClick={() => handleLiClick(word)}>
               {word}
             </Li>
           ))}
