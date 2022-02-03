@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { useClickAway } from '../Modal/useClickAway';
 import { Input, Li, Ul, Wrapper } from './style';
+import { createMatchedData } from './utils';
 
 interface Props {
   width?: number;
@@ -23,7 +24,6 @@ const AutoComplete = ({
   autoCompleteInput,
 }: Props) => {
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
-
   const [showMatched, setShowMatched] = useState(false);
 
   const closeMatchField = useCallback(() => {
@@ -35,51 +35,52 @@ const AutoComplete = ({
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       setAutoCompleteInput(value);
+
       if (!value.length) {
         setShowMatched(false);
         return setMatched([]);
       }
-      const filteredCashes = relatedWord
-        .filter((cash) => cash.includes(value))
-        .map((word) => ({ word, isSelected: false }));
-      setMatched(filteredCashes);
-      if (filteredCashes.length) {
-        setShowMatched(true);
-      } else {
-        setShowMatched(false);
-      }
-    },
-    [relatedWord],
-  );
-  const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
-      return;
-    }
 
-    if (!matched.length) return;
-    setShowMatched(true);
-    const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-    let nextIdx = 0;
-    if (e.key === 'ArrowDown') {
-      nextIdx = idx === -1 ? 0 : idx === matched.length - 1 ? 0 : idx + 1;
-    } else {
-      nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
-    }
-    setAutoCompleteInput(matched[nextIdx].word);
-    setMatched((prevMatched) =>
-      prevMatched.map((match, index) =>
-        index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
-      ),
-    );
-  };
-  const handleLiClick = (word: string) => {
-    setShowMatched(false);
-    setAutoCompleteInput(word);
-    const filteredCashes = relatedWord
-      .filter((cash) => cash.includes(word))
-      .map((word) => ({ word, isSelected: false }));
-    setMatched(filteredCashes);
-  };
+      const filteredCashes = createMatchedData(relatedWord, value);
+      setMatched(filteredCashes);
+      filteredCashes.length ? setShowMatched(true) : setShowMatched(false);
+    },
+    [relatedWord, createMatchedData],
+  );
+  const handleKeyUp = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
+        return;
+      }
+      if (!matched.length) return;
+
+      setShowMatched(true);
+      const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
+      let nextIdx = 0;
+      if (e.key === 'ArrowDown') {
+        nextIdx = idx === -1 || idx === matched.length - 1 ? 0 : idx + 1;
+      } else {
+        nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
+      }
+      setAutoCompleteInput(matched[nextIdx].word);
+      setMatched((prevMatched) =>
+        prevMatched.map((match, index) =>
+          index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
+        ),
+      );
+    },
+    [matched],
+  );
+  const handleLiClick = useCallback(
+    (word: string) => {
+      setShowMatched(false);
+      setAutoCompleteInput(word);
+      const filteredCashes = createMatchedData(relatedWord, word);
+      setMatched(filteredCashes);
+    },
+    [createMatchedData],
+  );
+
   return (
     <Wrapper>
       <Input
