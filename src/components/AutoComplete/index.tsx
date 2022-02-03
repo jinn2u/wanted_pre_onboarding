@@ -9,19 +9,22 @@ import React, {
 } from 'react';
 import { useClickAway } from '../Modal/useClickAway';
 import { Input, Li, Ul, Wrapper } from './style';
-import { createMatchedData } from './utils';
+import { createMatchedData, useUpdateInputAndCloseMated } from './utils';
 
 interface Props {
   width?: number;
   relatedWord: string[];
   setAutoCompleteInput: Dispatch<SetStateAction<string>>;
   autoCompleteInput: string;
+  handleSubmit: () => void;
 }
+export type matchedType = { word: string; isSelected: boolean }[];
 const AutoComplete = ({
   width = 300,
   relatedWord,
   setAutoCompleteInput,
   autoCompleteInput,
+  handleSubmit,
 }: Props) => {
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
   const [showMatched, setShowMatched] = useState(false);
@@ -49,11 +52,29 @@ const AutoComplete = ({
   );
   const handleKeyUp = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') {
         return;
       }
+
       if (!matched.length) return;
 
+      if (e.key === 'Enter') {
+        if (!showMatched) {
+          handleSubmit();
+          return;
+        }
+        const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
+        const word = matched[idx].word;
+        useUpdateInputAndCloseMated(
+          word,
+          relatedWord,
+          setShowMatched,
+          setAutoCompleteInput,
+          setMatched,
+        );
+        handleSubmit();
+        return;
+      }
       setShowMatched(true);
       const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
       let nextIdx = 0;
@@ -71,15 +92,16 @@ const AutoComplete = ({
     },
     [matched],
   );
-  const handleLiClick = useCallback(
-    (word: string) => {
-      setShowMatched(false);
-      setAutoCompleteInput(word);
-      const filteredCashes = createMatchedData(relatedWord, word);
-      setMatched(filteredCashes);
-    },
-    [createMatchedData],
-  );
+  const handleLiClick = (word: string) => {
+    useUpdateInputAndCloseMated(
+      word,
+      relatedWord,
+      setShowMatched,
+      setAutoCompleteInput,
+      setMatched,
+    );
+    handleSubmit();
+  };
 
   return (
     <Wrapper>
