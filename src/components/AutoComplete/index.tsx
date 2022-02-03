@@ -1,9 +1,10 @@
 import React, {
   ChangeEvent,
+  Dispatch,
   KeyboardEvent,
   MutableRefObject,
+  SetStateAction,
   useCallback,
-  useRef,
   useState,
 } from 'react';
 import { useClickAway } from '../Modal/useClickAway';
@@ -11,11 +12,18 @@ import { Input, Li, Ul, Wrapper } from './style';
 
 interface Props {
   width?: number;
+  relatedWord: string[];
+  setAutoCompleteInput: Dispatch<SetStateAction<string>>;
+  autoCompleteInput: string;
 }
-const AutoComplete = ({ width = 300 }: Props) => {
-  const [cashed, setCashed] = useState(['a', 'ab', 'abb', 'abbb', 'abbbb', 'abbbbb', 'abbbbbb']);
+const AutoComplete = ({
+  width = 300,
+  relatedWord,
+  setAutoCompleteInput,
+  autoCompleteInput,
+}: Props) => {
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
-  const [inputVal, setInputVal] = useState('');
+
   const [showMatched, setShowMatched] = useState(false);
 
   const closeMatchField = useCallback(() => {
@@ -26,12 +34,12 @@ const AutoComplete = ({ width = 300 }: Props) => {
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setInputVal(value);
+      setAutoCompleteInput(value);
       if (!value.length) {
         setShowMatched(false);
         return setMatched([]);
       }
-      const filteredCashes = cashed
+      const filteredCashes = relatedWord
         .filter((cash) => cash.includes(value))
         .map((word) => ({ word, isSelected: false }));
       setMatched(filteredCashes);
@@ -41,7 +49,7 @@ const AutoComplete = ({ width = 300 }: Props) => {
         setShowMatched(false);
       }
     },
-    [cashed],
+    [relatedWord],
   );
   const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
@@ -57,7 +65,7 @@ const AutoComplete = ({ width = 300 }: Props) => {
     } else {
       nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
     }
-    setInputVal(matched[nextIdx].word);
+    setAutoCompleteInput(matched[nextIdx].word);
     setMatched((prevMatched) =>
       prevMatched.map((match, index) =>
         index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
@@ -66,15 +74,20 @@ const AutoComplete = ({ width = 300 }: Props) => {
   };
   const handleLiClick = (word: string) => {
     setShowMatched(false);
-    setInputVal(word);
-    const filteredCashes = cashed
+    setAutoCompleteInput(word);
+    const filteredCashes = relatedWord
       .filter((cash) => cash.includes(word))
       .map((word) => ({ word, isSelected: false }));
     setMatched(filteredCashes);
   };
   return (
     <Wrapper>
-      <Input width={width} onChange={handleChange} onKeyUp={handleKeyUp} value={inputVal} />
+      <Input
+        width={width}
+        onChange={handleChange}
+        onKeyUp={handleKeyUp}
+        value={autoCompleteInput}
+      />
       {showMatched && (
         <Ul ref={ulRef as MutableRefObject<HTMLUListElement>} width={width}>
           {matched.map(({ word, isSelected }) => (
