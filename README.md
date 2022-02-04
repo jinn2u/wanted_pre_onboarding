@@ -77,7 +77,7 @@ tab의 역할은 페이지의 이동도 있지만 별도로 어떠한 동작을 
 
 따라서 내부의 onClick함수에서 외부의 handleClick함수를 실행함과 동시에, 현재 tab이 클릭되었는지 확인할 수 있는 상태인 isActive를 업데이트해 주었습니다.
 
-## **사용방법**
+## 사용방법
 
 ```tsx
 <Tab bgColor="lightgray">
@@ -97,7 +97,22 @@ div로 뼈대를 만들고 내부에 wordList와 input을 만들어주면 구현
 
 처음에 input안에 position:absolute를 통해 wordList들을 넣어주려했습니다. 하지만 그렇게 하더라도 input의 커서는 고정되어있기 때문에 wordList들에 가려지게 됩니다. 따라서 위와 같은 방법으로 변경하게 되었습니다.
 
-## **사용방법**
+input keyUp이벤트에서 
+```js
+  let value = (e.target as HTMLInputElement)
+  setWordList((prevWords) => [...prevWords, value]);
+  value = '';
+```
+로 하였습니다. 하지만 이렇게 하니 input에 정확한 값이 들어오지 않고 빈 문자열이 들어왔습니다.
+이유는 순서상 setWord를 한 후 value를 변경하는 것이지만, 리엑트는 상태업데이트를 미루다가 마지막에 한번에 합니다. 따라서 value가 변화한 값에 대해 상태업데이트를 하는것이죠.
+따라서 
+```js
+  setWordList((prevWords) => [...prevWords, value]);
+  (e.target as HTMLInputElement).value = '';
+```
+아래와 같은 방법으로 변경해 주었습니다.
+
+## 사용방법
 
 ```tsx
 <Tag width={200} setWordList={setWordList} wordList={wordList} />
@@ -106,3 +121,28 @@ div로 뼈대를 만들고 내부에 wordList와 input을 만들어주면 구현
 위와 같은 형태로 사용할 수 있습니다. width는 optional로 default는 400px입니다.
 
 props로 setWordList와 wordList를 넘겨주어야 합니다.
+
+# AutoComplete 컴포넌트
+
+input을 만들고 입력이 발생한다면 ```position: absolute```속성을 통해 li가 input보다 위에 나오게 됩니다. 
+즉 연관된 검색어가 위로 올라오게 됩니다.
+따라서
+1. onChange이벤트가 발생하면 inputValue를 변경한다.
+2. onKeyUp이벤트가 발생하면 ArrowUp과 ArrowDown, Enter이벤트가 아닌 경우 early return한다.
+    1. Enter이벤트가 발생했을 때 연관검색어창이 열려있는게 아니라면 사용자정의 이벤트(페이지 redirect등)를 실행한다.
+    2. 연관검색어 창이 닫혀있을 때 연관검색어 창을 열고 ArrowUp과 ArrowDown이벤트가 발생한다면 그에 맞게 background색이 변경된다.
+    3. 연관검색어 창이 열려있고 Enter이벤트가 발생한다면 연관검색어 창을 닫고 사옹자 정의 이벤트를 실행한다.
+3. 연관검색어 창이 열려있을 떄 hover가 된다면 background색이 변경된다.
+    1. 이떄 다른 부분을 클릭한다면 연관검색어 창이 닫힌다.
+    2. 연관검색어 창의 색이 변한 부분을 클릭하거나 Enter를 누른다면 사용자정의 이벤트를 실행하며 연관검색어 창이 닫힌다.
+
+## 어려웠던 부분
+
+input과 li가 전혀 연관이 없는데, arrowUp과 같은 이벤트가 발생했을 때 li의 색을 변경시킬지에 대한 고민을 했습니다.
+따라서 li의 배열에 색과 관련된 정보까지 useState에 담았습니다. 
+즉, arrowUp을 하게 된다면 현재 isSelected가 true인 배열의 다음 index를 선택하고 isSelected를 true로 변경하는식으로 해결했습니다.
+
+## 사용방법
+1. ```relatedWord``` 에는 현재 연관된 검색어를 띄웁니다(localStorage에 저장되어있거나 lru-cash에 저장되어있을 수도 있고, 서버에서 키보드 이벤트가 발생할 때마다 relatedWord배열을 업데이트할 수 도 있습니다.)
+2. Input의 value를 상위 컴포넌트에서 알아야 하고, 하위컴포넌트에서는 input의 상태를 변경해주어야 하기 때문에 ```setAutoCompleteInput```, ```autoCompleteInput```두개의 props를 전달해야 합니다.
+3. ```handleSubmit``` prop의 경우 엔터키 이벤트가 발생했을 떄 어떠한 동작을 수행할지 명시합니다.
