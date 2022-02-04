@@ -146,3 +146,88 @@ input과 li가 전혀 연관이 없는데, arrowUp과 같은 이벤트가 발생
 1. ```relatedWord``` 에는 현재 연관된 검색어를 띄웁니다(localStorage에 저장되어있거나 lru-cash에 저장되어있을 수도 있고, 서버에서 키보드 이벤트가 발생할 때마다 relatedWord배열을 업데이트할 수 도 있습니다.)
 2. Input의 value를 상위 컴포넌트에서 알아야 하고, 하위컴포넌트에서는 input의 상태를 변경해주어야 하기 때문에 ```setAutoCompleteInput```, ```autoCompleteInput```두개의 props를 전달해야 합니다.
 3. ```handleSubmit``` prop의 경우 엔터키 이벤트가 발생했을 떄 어떠한 동작을 수행할지 명시합니다.
+
+# ClickToEdit 컴포넌트
+
+ input외의 영역을 클릭했을 때, 반영이 되는 컴포넌트입니다. 
+ 그렇다면 결국 사용자는 input의 값이 어떤지, 어떻게 변화하는지는 몰라도 되며, 단순히 상위컴포넌트에서 밑에 있는 text의 상태만 잘 변경하면 됩니다.
+
+## 어려웠던 부분
+
+useClickAway에서 콜백으로 넘겨준 부분에서 inputValue가 계속 초기값인 ""빈 스트링을 가지고 있는 오류가 발생했습니다. 
+
+여태 잘 쓰고 있는 useClickAway였는데, 문제가 생기니 처음에는 ClickToEdit컴포넌트의 문제일거라 생각했습니다.
+
+하지만 디버깅을 해보니 ClickToEdit컴포넌트는 아무런 잘못이 없었습니다.
+
+다음으로 제가 생각해본것은 ref였습니다. ref는 한번 설정된 다음 변하지 않습니다.
+
+컴포넌트가 리렌더링되더라도 변하지 않죠.
+
+그렇기 때문에 DOM객체를 직접 사용하는 용도 외에도 상수를 보관하기 위해 사용하기도 합니다.
+
+따라서 초기에 설정이 될 때의 input값인 inputValue를 가지고 있어서 변경이 되지 않나? 라는 생각을 했습니다. 
+
+하지만 이 또한 잘못 되었죠. 제가 설정한 ref는 inputValue가 아니라 DOM을 저장하고 있기 때문입니다.
+
+ 
+
+마지막으로 생각한것이 의존성 배열입니다. 어딘가에 의존성 배열을 작성하지 않았다는 생각이 들기 시작합니다. 그런데, 저는ClickToEdit이라는 함수를 사용하면서 의존성 배열을 만든적이 없습니다. 따라서 여태 잘 사용했지만 useClickAway훅을 다시 한번 자세히 살펴보기로 했습니다.
+
+```tsx
+useEffect(
+  () => {
+    document.body.addEventListener('click', callback);
+    return () => document.body.removeEventListener('click', callback);
+  },[]
+);
+```
+그렇습니다.. 문제는 바로 이 부분에서 발생했습니다. useEffect에는 의존성 배열이 없는것을 확인할 수 있습니다. 따라서 초기의 callback함수, 즉 초기의 awayEvent만을 계속 가지고 있는것이죠.
+
+하지만 초기의 awayEvent의 경우 아래처럼 당연히 inputValue는 "" 임을 알 수 있습니다. 따라서 inputValue가 업데이트 되더라도 useEffect는 나몰라라 하는것이었습니다. 
+
+ const inputRef = useClickAway(() => {
+    setReflectInputValue(inputValue);
+  });
+때문에 useEffect에서 의존성 배열을 추가해주는 로직을 만들었고, useClickAway훅에서는 두 번째 인자로 dependency를 추가할 수 있도록 하였습니다.
+
+ 
+
+useClickAway에 의존성 배열 추가하기
+```tsx
+const inputRef = useClickAway(() => {
+  setReflectInputValue(inputValue);
+}, [inputValue]);
+```
+
+최종 useClickAway 코드
+```tsx
+import { useEffect, useRef } from 'react';
+
+export const useClickAway = (awayEvent: () => void, dep?: any[]) => {
+  const ref = useRef<HTMLElement>(null);
+  const callback = (e: MouseEvent) => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+    if (!element.contains(e.target as Node)) {
+      awayEvent();
+    }
+  };
+  useEffect(
+    () => {
+      document.body.addEventListener('click', callback);
+      return () => document.body.removeEventListener('click', callback);
+    },
+    dep ? [...dep] : [],
+  );
+  return ref;
+};
+```
+## 실행 방법
+
+```tsx
+  <ClickToEdit setReflectInputValue={setName} />
+```
+와 같이 사용할 수 있습니다. setReflectInputValue에는 input값에 따라 변화하고 싶은 상태의 setState를 넣어주면 됩니다.
