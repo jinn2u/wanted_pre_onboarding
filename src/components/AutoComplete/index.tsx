@@ -50,47 +50,44 @@ const AutoComplete = ({
     },
     [relatedWord, createMatchedData],
   );
-  const handleKeyUp = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') {
-        return;
-      }
 
-      if (!matched.length && relatedWord.length) return;
-      if (e.key === 'Enter') {
-        if (!showMatched) {
-          handleSubmit();
-          return;
-        }
-        const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-        const word = matched[idx].word;
-        useUpdateInputAndCloseMated(
-          word,
-          relatedWord,
-          setShowMatched,
-          setAutoCompleteInput,
-          setMatched,
-        );
-        handleSubmit();
-        return;
-      }
-      setShowMatched(true);
-      const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-      let nextIdx = 0;
-      if (e.key === 'ArrowDown') {
-        nextIdx = idx === -1 || idx === matched.length - 1 ? 0 : idx + 1;
-      } else {
-        nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
-      }
-      setAutoCompleteInput(matched[nextIdx].word);
-      setMatched((prevMatched) =>
-        prevMatched.map((match, index) =>
-          index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
-        ),
+  const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') {
+      return;
+    }
+    if (!relatedWord.length || !showMatched) {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || !autoCompleteInput.length) return;
+      return handleSubmit();
+    }
+    const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
+    const word = idx === -1 ? (e.target as HTMLInputElement).value : matched[idx].word;
+
+    if (e.key === 'Enter') {
+      useUpdateInputAndCloseMated(
+        word,
+        relatedWord,
+        setShowMatched,
+        setAutoCompleteInput,
+        setMatched,
       );
-    },
-    [matched],
-  );
+      handleSubmit();
+      setShowMatched(false);
+      return;
+    }
+
+    let nextIdx = 0;
+    if (e.key === 'ArrowDown') {
+      nextIdx = idx === -1 || idx === matched.length - 1 ? 0 : idx + 1;
+    } else if (e.key === 'ArrowUp') {
+      nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
+    }
+    setAutoCompleteInput(matched[nextIdx].word);
+    setMatched((prevMatched) =>
+      prevMatched.map((match, index) =>
+        index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
+      ),
+    );
+  };
   const handleLiClick = (word: string) => {
     useUpdateInputAndCloseMated(
       word,
