@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Wrapper } from './style';
-import PropTypes from 'prop-types';
+
 const TabItem = ({
   children,
   ...props

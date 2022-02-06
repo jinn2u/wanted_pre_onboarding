@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { Input, Wrapper } from './style';
 
 export interface Props {

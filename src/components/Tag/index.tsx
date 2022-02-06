@@ -1,5 +1,5 @@
 import { Input, Wrapper } from './style';
-import React, { Dispatch, KeyboardEvent, SetStateAction, useCallback, useState } from 'react';
+import React, { Dispatch, KeyboardEvent, SetStateAction, useCallback } from 'react';
 import WordBox from './WrodBox';
 
 interface Props {
