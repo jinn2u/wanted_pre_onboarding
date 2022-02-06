@@ -25,6 +25,7 @@ const AutoComplete = ({
   setAutoCompleteInput,
   autoCompleteInput,
   handleSubmit,
+  ...props
 }: Props) => {
   const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
   const [showMatched, setShowMatched] = useState(false);
@@ -100,7 +101,7 @@ const AutoComplete = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper {...props}>
       <Input
         width={width}
         onChange={handleChange}

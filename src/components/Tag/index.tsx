@@ -7,7 +7,7 @@ interface Props {
   setWordList: Dispatch<SetStateAction<string[]>>;
   wordList: string[];
 }
-const Tag = ({ width = 400, setWordList, wordList }: Props) => {
+const Tag = ({ width = 400, setWordList, wordList, ...props }: Props) => {
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     const { value } = e.target as HTMLInputElement;
     if (!value.length || e.key !== 'Enter') {
@@ -23,7 +23,7 @@ const Tag = ({ width = 400, setWordList, wordList }: Props) => {
 
   return (
     <>
-      <Wrapper width={width}>
+      <Wrapper width={width} {...props}>
         <ul>
           {wordList.map((word, idx) => (
             <li key={idx}>

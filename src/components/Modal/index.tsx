@@ -7,14 +7,14 @@ interface Props {
   children: React.ReactNode;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
-const ModalBase = ({ children, setIsModalOpen }: Props) => {
+const ModalBase = ({ children, setIsModalOpen, ...props }: Props) => {
   const handleCloseBtn = useCallback(() => {
     setIsModalOpen(false);
   }, []);
   const ref = useClickAway(handleCloseBtn);
   return (
     <Dim>
-      <Wrapper ref={ref as MutableRefObject<HTMLDivElement>} className="modal">
+      <Wrapper className="modal" ref={ref as MutableRefObject<HTMLDivElement>} {...props}>
         <CloseBtn type="button" onClick={handleCloseBtn}>
           x
         </CloseBtn>
@@ -23,7 +23,7 @@ const ModalBase = ({ children, setIsModalOpen }: Props) => {
     </Dim>
   );
 };
-const Modal = ({ children, setIsModalOpen }: Props) => {
+const Modal = ({ children, setIsModalOpen, ...props }: Props) => {
   const el = useMemo(() => {
     const $el = document.createElement('div');
     $el.className = 'portal-modal';
@@ -38,7 +38,9 @@ const Modal = ({ children, setIsModalOpen }: Props) => {
   });
 
   return ReactDOM.createPortal(
-    <ModalBase setIsModalOpen={setIsModalOpen}>{children}</ModalBase>,
+    <ModalBase {...props} setIsModalOpen={setIsModalOpen}>
+      {children}
+    </ModalBase>,
     el,
   );
 };

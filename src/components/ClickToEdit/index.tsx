@@ -7,7 +7,7 @@ interface Props {
   width?: string | number;
   height?: string | number;
 }
-const ClickToEdit = ({ setReflectInputValue, width = 200, height = 40 }: Props) => {
+const ClickToEdit = ({ setReflectInputValue, width = 200, height = 40, ...props }: Props) => {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useClickAway(() => {
     setReflectInputValue(inputValue);
@@ -18,6 +18,7 @@ const ClickToEdit = ({ setReflectInputValue, width = 200, height = 40 }: Props) 
   };
   return (
     <Input
+      {...props}
       width={width}
       height={height}
       ref={inputRef as MutableRefObject<HTMLInputElement>}
