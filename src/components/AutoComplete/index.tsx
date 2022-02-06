@@ -56,8 +56,7 @@ const AutoComplete = ({
         return;
       }
 
-      if (!matched.length) return;
-
+      if (!matched.length && relatedWord.length) return;
       if (e.key === 'Enter') {
         if (!showMatched) {
           handleSubmit();
