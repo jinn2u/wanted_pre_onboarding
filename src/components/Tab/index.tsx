@@ -10,9 +10,9 @@ const Tab = ({ children, height = 50, bgColor = 'white', ...props }: Props) => {
   const filterValidChildren = useCallback(
     (children: ReactNode) =>
       React.Children.toArray(children).filter(
-        (element) => React.isValidElement(element) && element.props.__TYPE !== 'tabItems',
+        (element) => React.isValidElement(element) && element.props.__TYPE === 'tabItem',
       ),
-    [children],
+    [],
   );
   const [isActive, setIsActive] = useState<number>(() => {
     const activeItem = filterValidChildren(children).map((element, idx) => {
