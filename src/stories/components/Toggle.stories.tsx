@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Toggle } from '../../components';
 import { Container } from '../../style';
 export default {
-  title: 'Example/Tag',
+  title: 'Example/Toggle',
   component: Toggle,
   argTypes: {},
 } as ComponentMeta<typeof Toggle>;
