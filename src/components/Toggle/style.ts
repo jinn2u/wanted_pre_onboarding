@@ -20,6 +20,7 @@ export const Wrapper = styled.div<{ width: number; height: number }>`
   width: ${({ width }) => `${width}px`};
   background-color: lightgrey;
   border-radius: 50px;
+  overflow: hidden;
   &::after {
     content: '';
     position: absolute;
