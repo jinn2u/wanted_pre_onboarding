@@ -7,23 +7,22 @@ export default {
   title: 'Example/Tag',
   components: Tag,
   argTypes: {},
-  decorators: [
-    (Story) => {
-      return (
-        <Container>
-          <Story />
-        </Container>
-      );
-    },
-  ],
 } as ComponentMeta<typeof Tag>;
 
 export const Default: ComponentStory<typeof Tag> = (args) => {
   const [wordList, setWordList] = useState<string[]>([]);
-  return <Tag {...args} setWordList={setWordList} wordList={wordList} />;
+  return (
+    <Container>
+      <Tag {...args} setWordList={setWordList} wordList={wordList} />
+    </Container>
+  );
 };
 
 export const FullWidth: ComponentStory<typeof Tag> = (args) => {
   const [wordList, setWordList] = useState<string[]>([]);
-  return <Tag {...args} width="100%" setWordList={setWordList} wordList={wordList} />;
+  return (
+    <Container>
+      <Tag {...args} width="100%" setWordList={setWordList} wordList={wordList} />
+    </Container>
+  );
 };

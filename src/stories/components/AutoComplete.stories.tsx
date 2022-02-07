@@ -8,15 +8,6 @@ export default {
   title: 'Example/AutoComplete',
   component: AutoComplete,
   argTypes: {},
-  decorators: [
-    (Story) => {
-      return (
-        <Container>
-          <Story />
-        </Container>
-      );
-    },
-  ],
 } as ComponentMeta<typeof AutoComplete>;
 
 export const Default: ComponentStory<typeof AutoComplete> = (args) => {
@@ -24,13 +15,15 @@ export const Default: ComponentStory<typeof AutoComplete> = (args) => {
   const relatedWord = ['a', 'apple', 'pineapple', 'bear'];
 
   return (
-    <AutoComplete
-      {...args}
-      relatedWord={relatedWord}
-      setAutoCompleteInput={setAutoCompleteInput}
-      autoCompleteInput={autoCompleteInput}
-      handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
-    />
+    <Container>
+      <AutoComplete
+        {...args}
+        relatedWord={relatedWord}
+        setAutoCompleteInput={setAutoCompleteInput}
+        autoCompleteInput={autoCompleteInput}
+        handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
+      />
+    </Container>
   );
 };
 
@@ -39,13 +32,15 @@ export const NoRelatedWord: ComponentStory<typeof AutoComplete> = (args) => {
   const relatedWord: string[] = [];
 
   return (
-    <AutoComplete
-      {...args}
-      relatedWord={relatedWord}
-      setAutoCompleteInput={setAutoCompleteInput}
-      autoCompleteInput={autoCompleteInput}
-      handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
-    />
+    <Container>
+      <AutoComplete
+        {...args}
+        relatedWord={relatedWord}
+        setAutoCompleteInput={setAutoCompleteInput}
+        autoCompleteInput={autoCompleteInput}
+        handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
+      />
+    </Container>
   );
 };
 
@@ -54,13 +49,15 @@ export const ChangeWidth: ComponentStory<typeof AutoComplete> = (args) => {
   const relatedWord = ['a', 'apple', 'pineapple', 'bear'];
 
   return (
-    <AutoComplete
-      {...args}
-      width={500}
-      relatedWord={relatedWord}
-      setAutoCompleteInput={setAutoCompleteInput}
-      autoCompleteInput={autoCompleteInput}
-      handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
-    />
+    <Container>
+      <AutoComplete
+        {...args}
+        width={500}
+        relatedWord={relatedWord}
+        setAutoCompleteInput={setAutoCompleteInput}
+        autoCompleteInput={autoCompleteInput}
+        handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
+      />
+    </Container>
   );
 };

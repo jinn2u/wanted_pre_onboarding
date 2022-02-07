@@ -7,21 +7,12 @@ export default {
   title: 'Example/Tab',
   component: Tab,
   argTypes: {},
-  decorators: [
-    (Story) => {
-      return (
-        <Container>
-          <Story />
-        </Container>
-      );
-    },
-  ],
 } as ComponentMeta<typeof Tab>;
 
 export const Default: ComponentStory<typeof Tab> = (args) => {
   const [tabs, setTabs] = useState(0);
   return (
-    <>
+    <Container>
       <Tab {...args} bgColor="lightgray" style={{ marginBottom: '10px' }}>
         <TabItem handleClick={() => setTabs(0)}>Tab1 Tab1</TabItem>
         <TabItem handleClick={() => setTabs(1)}>Tab2</TabItem>
@@ -30,7 +21,7 @@ export const Default: ComponentStory<typeof Tab> = (args) => {
       Tab Menu {tabs === 0 && 'one'}
       {tabs === 1 && 'two'}
       {tabs === 2 && 'three'}
-    </>
+    </Container>
   );
 };
 export const InvalidChildren: ComponentStory<typeof Tab> = (args) => {
@@ -45,7 +36,7 @@ export const InvalidChildren: ComponentStory<typeof Tab> = (args) => {
 export const SetWidth: ComponentStory<typeof Tab> = (args) => {
   const [tabs, setTabs] = useState(0);
   return (
-    <>
+    <Container>
       <Tab {...args} bgColor="lightgray" style={{ width: '300px' }}>
         <TabItem handleClick={() => setTabs(0)}>Tab1 Tab1</TabItem>
         <TabItem handleClick={() => setTabs(1)}>Tab2</TabItem>
@@ -53,14 +44,14 @@ export const SetWidth: ComponentStory<typeof Tab> = (args) => {
       Tab Menu {tabs === 0 && 'one'}
       {tabs === 1 && 'two'}
       {tabs === 2 && 'three'}
-    </>
+    </Container>
   );
 };
 
 export const TabOverFlow: ComponentStory<typeof Tab> = (args) => {
   const [tabs, setTabs] = useState(0);
   return (
-    <>
+    <Container>
       <Tab {...args} bgColor="lightgray" style={{ width: '300px' }}>
         <TabItem handleClick={() => setTabs(0)}>
           Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1 Tab1Tab1
@@ -73,6 +64,6 @@ export const TabOverFlow: ComponentStory<typeof Tab> = (args) => {
       Tab Menu {tabs === 0 && 'one'}
       {tabs === 1 && 'two'}
       {tabs === 2 && 'three'}
-    </>
+    </Container>
   );
 };
