@@ -7,11 +7,19 @@ interface Props {
   children: React.ReactNode;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
+
 const ModalBase = ({ children, setIsModalOpen, ...props }: Props) => {
   const handleCloseBtn = useCallback(() => {
     setIsModalOpen(false);
   }, []);
   const ref = useClickAway(handleCloseBtn);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   return (
     <Dim>
       <Wrapper className="modal" ref={ref as MutableRefObject<HTMLDivElement>} {...props}>
