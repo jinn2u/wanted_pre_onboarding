@@ -49,6 +49,87 @@ export const PropsSetting: ComponentStory<typeof Modal> = (args) => {
     </Container>
   );
 };
+
+export const OverflowModal: ComponentStory<typeof Modal> = (args) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  return (
+    <Container>
+      <button onClick={() => setModalOpen(true)}>모달 열기</button>
+      {modalOpen && (
+        <Modal {...args} setIsModalOpen={setModalOpen}>
+          <div style={{ height: '400px', width: '500px', overflow: 'auto' }}>
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+            Modal Inner
+            <br />
+          </div>
+        </Modal>
+      )}
+    </Container>
+  );
+};
 const CuModal = styled(Modal)`
   padding: 0px;
 `;
