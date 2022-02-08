@@ -8,8 +8,6 @@ export const Input = styled.input<{ height: number; width: number }>`
     }
     &::before {
       width: 100%;
-      border-top-right-radius: 50px;
-      border-bottom-right-radius: 50px;
     }
   }
 `;
@@ -21,6 +19,7 @@ export const Wrapper = styled.div<{ width: number; height: number }>`
   background-color: lightgrey;
   border-radius: 50px;
   overflow: hidden;
+  contain: layout;
   &::after {
     content: '';
     position: absolute;
@@ -39,10 +38,7 @@ export const Wrapper = styled.div<{ width: number; height: number }>`
     left: 0;
     bottom: 0;
     height: inherit;
-    width: 0;
-    border-top-left-radius: 50px;
-    border-bottom-left-radius: 50px;
-    transition: all 0.2s;
-    transition-timing-function: linear;
+    width: 0px;
+    transition: all 0.2s linear;
   }
 `;

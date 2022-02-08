@@ -28,16 +28,6 @@ export const ChangeWidth: ComponentStory<typeof Toggle> = (args) => {
   );
 };
 
-export const ChangeHeight: ComponentStory<typeof Toggle> = (args) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <Container>
-      <Toggle {...args} name="토글 테스트" height={60} isToggled={open} setIsToggled={setOpen} />
-      Toggle switch {open}
-    </Container>
-  );
-};
-
 export const ChangeWidthAndHeight: ComponentStory<typeof Toggle> = (args) => {
   const [open, setOpen] = useState(false);
   return (
@@ -45,8 +35,8 @@ export const ChangeWidthAndHeight: ComponentStory<typeof Toggle> = (args) => {
       <Toggle
         {...args}
         name="토글 테스트"
-        width={400}
-        height={100}
+        width={300}
+        height={30}
         isToggled={open}
         setIsToggled={setOpen}
       />
