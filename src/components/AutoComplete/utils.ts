@@ -11,24 +11,24 @@ export const useUpdateInputAndCloseMated = (
   cashedWordList: string[],
   setShowMatched: Dispatch<SetStateAction<boolean>>,
   setAutoCompleteInput: Dispatch<SetStateAction<string>>,
-  setSelectedDropdownWord: Dispatch<SetStateAction<matchedType>>,
+  setDropdownList: Dispatch<SetStateAction<matchedType>>,
   handleSubmit: () => void,
 ) => {
   setShowMatched(false);
   setAutoCompleteInput(word);
-  const filteredCashes = createMatchedData(cashedWordList, word);
-  setSelectedDropdownWord(filteredCashes);
+  const filteredCashes = createMatchedData(cashedWordList, word).slice(0, 10);
+  setDropdownList(filteredCashes);
   handleSubmit();
 };
 
 export const findMatchedDataAndDefineModalIsOpenable = (
   cashedWordList: string[],
   inputValue: string,
-  setSelectedDropdownWord: Dispatch<SetStateAction<matchedType>>,
+  setDropdownList: Dispatch<SetStateAction<matchedType>>,
   setShowMatched: Dispatch<SetStateAction<boolean>>,
 ) => {
-  const filteredCashes = createMatchedData(cashedWordList, inputValue);
-  setSelectedDropdownWord(filteredCashes);
+  const filteredCashes = createMatchedData(cashedWordList, inputValue).slice(0, 10);
+  setDropdownList(filteredCashes);
   filteredCashes.length ? setShowMatched(true) : setShowMatched(false);
 };
 

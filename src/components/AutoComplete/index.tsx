@@ -89,11 +89,13 @@ const AutoComplete = ({
     const nextDropdownIdx = defineNextDropdownIdx(e.key, idx, dropdownList);
     setAutoCompleteInput(dropdownList[nextDropdownIdx].word);
     setDropdownList((prevMatched) =>
-      prevMatched.map((match, index) =>
-        index === nextDropdownIdx
-          ? { ...match, isSelected: true }
-          : { ...match, isSelected: false },
-      ),
+      prevMatched
+        .map((match, index) =>
+          index === nextDropdownIdx
+            ? { ...match, isSelected: true }
+            : { ...match, isSelected: false },
+        )
+        .slice(0, 10),
     );
   };
 
