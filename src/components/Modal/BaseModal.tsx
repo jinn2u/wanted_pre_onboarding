@@ -1,4 +1,4 @@
-import { useClickAway } from './useClickAway';
+import { useClickAway } from '../../hooks/useClickAway';
 import { usePreventScroll } from './usePreventScroll';
 import { CloseBtn, Dim, Wrapper } from './style';
 import { MutableRefObject, useCallback } from 'react';

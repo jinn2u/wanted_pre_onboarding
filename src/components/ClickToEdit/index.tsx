@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useState } from 'react';
-import { useClickAway } from '../Modal/useClickAway';
+import { useClickAway } from '../../hooks/useClickAway';
 import { Input } from './style';
 
 interface Props {
