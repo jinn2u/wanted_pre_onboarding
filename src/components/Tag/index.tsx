@@ -1,6 +1,6 @@
 import { Input, Wrapper } from './style';
-import React, { Dispatch, KeyboardEvent, SetStateAction, useCallback } from 'react';
-import WordBox from './WrodBox';
+import { Dispatch, KeyboardEvent, SetStateAction, useCallback } from 'react';
+import WordBox from './WordBox';
 
 interface Props {
   width?: number | string;
@@ -22,18 +22,16 @@ const Tag = ({ width = 400, setWordList, wordList, ...props }: Props) => {
   }, []);
 
   return (
-    <>
-      <Wrapper width={width} {...props}>
-        <ul>
-          {wordList.map((word, idx) => (
-            <li key={idx}>
-              <WordBox word={word} onErase={() => onErase(idx)} />
-            </li>
-          ))}
-        </ul>
-        <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
-      </Wrapper>
-    </>
+    <Wrapper width={width} {...props}>
+      <ul>
+        {wordList.map((word, idx) => (
+          <li key={idx}>
+            <WordBox word={word} onErase={() => onErase(idx)} />
+          </li>
+        ))}
+      </ul>
+      <Input placeholder="Please enter to add tags" onKeyUp={handleKeyUp} />
+    </Wrapper>
   );
 };
 export default Tag;

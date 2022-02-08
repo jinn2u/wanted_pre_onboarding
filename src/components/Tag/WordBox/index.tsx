@@ -10,7 +10,6 @@ const WordBox = ({ word, onErase }: Props) => {
       <EraseBtn type="button" onClick={onErase}>
         x
       </EraseBtn>
-
       {word}
     </Wrapper>
   );

@@ -13,7 +13,7 @@ export const Default: ComponentStory<typeof Tag> = (args) => {
   const [wordList, setWordList] = useState<string[]>([]);
   return (
     <Container>
-      <Tag {...args} setWordList={setWordList} wordList={wordList} />
+      <Tag {...args} width={200} setWordList={setWordList} wordList={wordList} />
     </Container>
   );
 };
