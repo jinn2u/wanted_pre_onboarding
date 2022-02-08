@@ -1,4 +1,4 @@
-import React, {
+import {
   ChangeEvent,
   Dispatch,
   KeyboardEvent,
@@ -7,13 +7,19 @@ import React, {
   useCallback,
   useState,
 } from 'react';
-import { useClickAway } from '../Modal/useClickAway';
+import { useClickAway } from '../../hooks/useClickAway';
 import { Input, Li, Ul, Wrapper } from './style';
-import { createMatchedData, useUpdateInputAndCloseMated } from './utils';
+import {
+  createMatchedData,
+  defineNextDropdownIdx,
+  findCurrentInputWord,
+  findMatchedDataAndDefineModalIsOpenable,
+  useUpdateInputAndCloseMated,
+} from './utils';
 
 interface Props {
   width?: number;
-  relatedWord: string[];
+  cashedWordList: string[];
   setAutoCompleteInput: Dispatch<SetStateAction<string>>;
   autoCompleteInput: string;
   handleSubmit: () => void;
@@ -21,19 +27,18 @@ interface Props {
 export type matchedType = { word: string; isSelected: boolean }[];
 const AutoComplete = ({
   width = 300,
-  relatedWord,
+  cashedWordList,
   setAutoCompleteInput,
   autoCompleteInput,
   handleSubmit,
   ...props
 }: Props) => {
-  const [matched, setMatched] = useState<{ word: string; isSelected: boolean }[]>([]);
+  const [dropdownList, setDropdownList] = useState<{ word: string; isSelected: boolean }[]>([]);
   const [showMatched, setShowMatched] = useState(false);
 
-  const closeMatchField = useCallback(() => {
-    setShowMatched(false);
-  }, []);
-  const ulRef = useClickAway(closeMatchField);
+  const ulRef = useClickAway(() => {
+    showMatched && setShowMatched(false);
+  }, [showMatched]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,75 +47,82 @@ const AutoComplete = ({
 
       if (!value.length) {
         setShowMatched(false);
-        return setMatched([]);
+        return setDropdownList([]);
       }
 
-      const filteredCashes = createMatchedData(relatedWord, value);
-      setMatched(filteredCashes);
-      filteredCashes.length ? setShowMatched(true) : setShowMatched(false);
+      findMatchedDataAndDefineModalIsOpenable(
+        cashedWordList,
+        value,
+        setDropdownList,
+        setShowMatched,
+      );
     },
-    [relatedWord, createMatchedData],
+    [cashedWordList, createMatchedData, findMatchedDataAndDefineModalIsOpenable],
   );
 
   const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') {
-      return;
-    }
-    if (!relatedWord.length || !showMatched) {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || !autoCompleteInput.length) return;
-      return handleSubmit();
-    }
-    const idx = matched.findIndex(({ word, isSelected }) => isSelected === true);
-    const word = idx === -1 ? (e.target as HTMLInputElement).value : matched[idx].word;
+    e.preventDefault();
+    const inputValue = (e.target as HTMLInputElement).value;
+    // 해당하는 키이벤트가 아니라면 종료
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') return;
+    // input에 값이 없다면 종료
+    if (!inputValue) return;
+    // 캐싱된 단어리스트가 없을 때, 윗키, 아랫키를 누른다면 종료
+    if (!cashedWordList.length && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) return;
+    if (inputValue && !dropdownList.length) return;
+    const [idx, word] = findCurrentInputWord(dropdownList, inputValue);
 
     if (e.key === 'Enter') {
       useUpdateInputAndCloseMated(
         word,
-        relatedWord,
+        cashedWordList,
         setShowMatched,
         setAutoCompleteInput,
-        setMatched,
+        setDropdownList,
+        handleSubmit,
       );
-      handleSubmit();
       setShowMatched(false);
       return;
     }
 
-    let nextIdx = 0;
-    if (e.key === 'ArrowDown') {
-      nextIdx = idx === -1 || idx === matched.length - 1 ? 0 : idx + 1;
-    } else if (e.key === 'ArrowUp') {
-      nextIdx = idx === -1 || idx === 0 ? matched.length - 1 : idx - 1;
-    }
-    setAutoCompleteInput(matched[nextIdx].word);
-    setMatched((prevMatched) =>
+    setShowMatched(true);
+    const nextDropdownIdx = defineNextDropdownIdx(e.key, idx, dropdownList);
+    setAutoCompleteInput(dropdownList[nextDropdownIdx].word);
+    setDropdownList((prevMatched) =>
       prevMatched.map((match, index) =>
-        index === nextIdx ? { ...match, isSelected: true } : { ...match, isSelected: false },
+        index === nextDropdownIdx
+          ? { ...match, isSelected: true }
+          : { ...match, isSelected: false },
       ),
     );
   };
+
   const handleLiClick = (word: string) => {
     useUpdateInputAndCloseMated(
       word,
-      relatedWord,
+      cashedWordList,
       setShowMatched,
       setAutoCompleteInput,
-      setMatched,
+      setDropdownList,
+      handleSubmit,
     );
-    handleSubmit();
   };
-
+  const handleClick = () => {
+    if (!dropdownList.length) return;
+    setShowMatched(true);
+  };
   return (
     <Wrapper {...props}>
       <Input
         width={width}
         onChange={handleChange}
         onKeyUp={handleKeyUp}
+        onClick={handleClick}
         value={autoCompleteInput}
       />
       {showMatched && (
         <Ul ref={ulRef as MutableRefObject<HTMLUListElement>} width={width}>
-          {matched.map(({ word, isSelected }) => (
+          {dropdownList.map(({ word, isSelected }) => (
             <Li isSelected={isSelected} key={word} onClick={() => handleLiClick(word)}>
               {word}
             </Li>
