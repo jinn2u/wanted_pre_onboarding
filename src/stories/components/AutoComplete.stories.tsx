@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { AutoComplete } from '../../components';
 import { Container } from '../../style';
 import { action } from '@storybook/addon-actions';
+import { country } from '../../components/AutoComplete/constant';
 
 export default {
   title: 'Example/AutoComplete',
@@ -12,13 +13,13 @@ export default {
 
 export const Default: ComponentStory<typeof AutoComplete> = (args) => {
   const [autoCompleteInput, setAutoCompleteInput] = useState('');
-  const relatedWord = ['a', 'apple', 'pineapple', 'bear'];
+  const cashedWordList = country;
 
   return (
     <Container>
       <AutoComplete
         {...args}
-        relatedWord={relatedWord}
+        cashedWordList={cashedWordList}
         setAutoCompleteInput={setAutoCompleteInput}
         autoCompleteInput={autoCompleteInput}
         handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
@@ -29,13 +30,13 @@ export const Default: ComponentStory<typeof AutoComplete> = (args) => {
 
 export const NoRelatedWord: ComponentStory<typeof AutoComplete> = (args) => {
   const [autoCompleteInput, setAutoCompleteInput] = useState('');
-  const relatedWord: string[] = [];
+  const cashedWordList = country;
 
   return (
     <Container>
       <AutoComplete
         {...args}
-        relatedWord={relatedWord}
+        cashedWordList={cashedWordList}
         setAutoCompleteInput={setAutoCompleteInput}
         autoCompleteInput={autoCompleteInput}
         handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
@@ -46,14 +47,14 @@ export const NoRelatedWord: ComponentStory<typeof AutoComplete> = (args) => {
 
 export const ChangeWidth: ComponentStory<typeof AutoComplete> = (args) => {
   const [autoCompleteInput, setAutoCompleteInput] = useState('');
-  const relatedWord = ['a', 'apple', 'pineapple', 'bear'];
+  const cashedWordList = country;
 
   return (
     <Container>
       <AutoComplete
         {...args}
-        width={500}
-        relatedWord={relatedWord}
+        width={100}
+        cashedWordList={cashedWordList}
         setAutoCompleteInput={setAutoCompleteInput}
         autoCompleteInput={autoCompleteInput}
         handleSubmit={action(`${autoCompleteInput}이 submit되었습니다`)}
