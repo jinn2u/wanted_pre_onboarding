@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const Wrapper = styled.div`
-  width: 100wh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,8 +10,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled.div`
-  min-width: 500px;
-  max-width: 500px;
+  width: 500px;
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -19,5 +18,8 @@ export const Container = styled.div`
   align-items: center;
   border: 2px solid lightgrey;
   border-radius: 10px;
-  box-sizing: border-box;
+
+  @media (max-width: 500px) {
+    width: 300px;
+  }
 `;

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Toggle, Tab, TabItem, Tag, AutoComplete, ClickToEdit } from './components';
+import { country } from './components/AutoComplete/constant';
 import { Container, Wrapper } from './style';
 
 const App = () => {
@@ -8,7 +9,7 @@ const App = () => {
   const [tabs, setTabs] = useState(0);
   const [wordList, setWordList] = useState<string[]>([]);
   // useEffect로 가져온 캐쉬된 autoComplete 데이터
-  const [relatedWord, setRelatedWord] = useState(['a', 'ab', 'abb', 'bab', 'abbbb']);
+  const [cashedWordList, setCashedWordList] = useState(country);
   const [autoCompleteInput, setAutoCompleteInput] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -42,7 +43,26 @@ const App = () => {
         >
           Open Modal
         </button>
-        {isModalOpen && <Modal setIsModalOpen={setIsModalOpen}>HELLO CODESTATES!</Modal>}
+        {isModalOpen && (
+          <Modal setIsModalOpen={setIsModalOpen}>
+            <div style={{ height: '100px', width: '300px', overflow: 'auto' }}>
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+              HELLO CODESTATES! <br />
+            </div>
+          </Modal>
+        )}
       </Container>
       <Container>
         <Tab bgColor="lightgray" style={{ marginBottom: '10px' }}>
@@ -58,9 +78,8 @@ const App = () => {
         <Tag width={400} setWordList={setWordList} wordList={wordList} />
       </Container>
       <Container>
-        <h5>a,,b와 관련된 단어만 있습니다. 테스트하려면 a또는 b를 입력해 주세요.</h5>
         <AutoComplete
-          relatedWord={relatedWord}
+          cashedWordList={cashedWordList}
           setAutoCompleteInput={setAutoCompleteInput}
           autoCompleteInput={autoCompleteInput}
           handleSubmit={() => console.log('AutoComplete Enter pushed!')}

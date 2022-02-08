@@ -1,3 +1,23 @@
+# 실행하기
+
+- yarn 을 통해 디펜던시를 다운하는것을 권장합니다.
+- yarn start를 통해 실행할 수 있습니다.
+- yarn storybook을 통해 스토리북을 실행할 수 있습니다.
+- storybook 사용시 docs showCode를 통해 코드를 확인할 수 있습니다.
+- 빠르게 확인하고 싶다면 아래의 주소를 클릭해 주세요
+- https://wanted-storybook.netlify.app/
+
+# Toggle 컴포넌트 
+클릭을 한다면 배경과 함께 흰색 버튼이 움직여야합니다.
+따라서 after가상 선택자를 통해 흰색 원을  만들어 주었습니다.
+또한 배경색은 before가상선택자를 통해 파란 배경을 만들어주었고, transition을 통해 효과를 주었습니다.
+
+## 어려웠더 부분
+크기에 상관없이 일정한 흰색 버튼을 만들어야 했습니다. 따라서 width와 height는 기존의 height에 0.8을 곱해주었습니다.
+또한 왼쪽과 오른쪽의 padding또한 주어야 합니다.
+현재 원의 크기는 height*0.8입니다. 
+그렇다면 세로의 남은 폭은 height*0.2입니다. 여기에 위,아래 두개의 padding이 남기 때문에 (height*0.2)/2를 해주어 상하좌우 똑같은 padding이 있는것처럼 보이게 left와 bottom값을 주었습니다.
+
 # Modal 컴포넌트
 
 모달은 createPortal을 사용해서 만들어 주었습니다.
@@ -43,6 +63,70 @@ return ReactDOM.createPortal(
 따라서 다음 방법으로 useLayoutEffect를 생각해보았습니다.
 
 useLayoutEffect의 경우 layout은 되었지만 Paint되기전에 실행이 됩니다. 하지만 이 또한 layout되는 시점에 .modal-root를 찾을 수 없기 때문에 에러가 납니다.
+
+### 스크롤 관련 이슈
+
+#### 첫 번째 문제
+e.preventDefault()와 e.stopPropagation()을 통해 이벤트를 막는 방법으로 스크롤을 막아야겠다는 생각을 했습니다.
+
+하지만 어림도 없이 스크롤은 잘 되었습니다.
+
+고민을 하다 실행 시점에서의 문제가 있다는 것을 깨닫게 되었습니다.
+
+mdn한글 문서를 보게 된다면 scroll은 view나 element가 스크롤될 때 scroll이벤트가 발생한다라고 되어있습니다.
+
+정말 모호한 말이 아닐 수가 없습니다. 영어로 된 mdn을 보게 된다면 scroll event라고 명시가 되었는데, The scrollevent fires when an element has been scrolled. 즉, 요소가 스크롤된 다음 이벤트가 발생한다.라고 명시되어 있습니다. 때문에 이미 스크롤이 일어난 곳에서 이벤트를 막아봤자 동작하지 않았던 것입니다.
+
+
+
+따라서 계속 scroll을 대체할 만한 이벤트를 찾던 와중 wheel과 mousewheel을 발견하게 됩니다.
+
+mousewheel의 경우 비표준이며 지원하지 않는 브라우저도 있으며, deprecated 되었다고 합니다.
+
+이에 따라 대체된 것이 wheel이벤트입니다.
+
+wheel이벤트를 본다면 Thewheelevent fires when the user rotates a wheel button on a pointing device (typically a mouse). 즉, 사용자가 휠 버튼을 돌릴 때 발생한다고 합니다.
+
+따라서 wheel이벤트에 이벤트 전파를 방지하고, 기본 동작을 막는다면, 잘 동작하게 됩니다.
+
+
+#### 두 번째 문제
+하지만 이렇게 하다 보니 휠 이벤트 자체를 막게 되었고, Modal컴포넌트에서 overflow가 발생했을 때도 scroll이 되지 않았습니다.
+
+따라서 결국 body에 overflow:hidden속성을 주는 것으로 해결을 했습니다.
+
+또한 touch-action:none을 한다면 모바일에서도 막을 수 있습니다.
+
+
+
+
+#### 세 번째 문제
+하지만 모바일의 특징상 끝까지 아래로 내린다면 url창이 보이며 위로 올리면 hidden이 되었던 요소들이 보이게 됩니다.
+
+저는 모달의 Dim에 height:100vh와 background색을 변경하였는데, 끝까지 overflow 된 모달을 위로 스크롤한다면 화면에서 숨겨져 있던 여백이 흰색으로 보이게 됩니다.
+
+따라서 모달의 height를  100%로 수정하여 추가적인 여백이 위로 올라오더라도 background색이 변하도록 했습니다.
+
+
+
+결론
+overflow는 reflow를 일으키기 때문에 이벤트로 막으려고 했지만...  복잡도를 생각했을 때 이것이 최선의 방법인것 같습니다.
+
+overflow로 인해 성능적 이슈가 발생하면 다른 방법을 다시 생각해보아야할것 같습니다.
+
+
+
+크롬 / Safari  web/mobile에서 잘 동작하는 것을 확인할 수 있습니다.
+```ts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+```
+
+별도로 빼두어 훅으로 사용할 수도 있습니다.
 
 ## 결론
 
@@ -143,7 +227,7 @@ input과 li가 전혀 연관이 없는데, arrowUp과 같은 이벤트가 발생
 즉, arrowUp을 하게 된다면 현재 isSelected가 true인 배열의 다음 index를 선택하고 isSelected를 true로 변경하는식으로 해결했습니다.
 
 ## 사용방법
-1. ```relatedWord``` 에는 현재 연관된 검색어를 띄웁니다(localStorage에 저장되어있거나 lru-cash에 저장되어있을 수도 있고, 서버에서 키보드 이벤트가 발생할 때마다 relatedWord배열을 업데이트할 수 도 있습니다.)
+1. ```cashedWordList``` 에는 현재 연관된 검색어를 띄웁니다(localStorage에 저장되어있거나 lru-cash에 저장되어있을 수도 있고, 서버에서 키보드 이벤트가 발생할 때마다 cashedWordList배열을 업데이트할 수 도 있습니다.)
 2. Input의 value를 상위 컴포넌트에서 알아야 하고, 하위컴포넌트에서는 input의 상태를 변경해주어야 하기 때문에 ```setAutoCompleteInput```, ```autoCompleteInput```두개의 props를 전달해야 합니다.
 3. ```handleSubmit``` prop의 경우 엔터키 이벤트가 발생했을 떄 어떠한 동작을 수행할지 명시합니다.
 4. 현재 a과 관련된 데이터들만 임시로 넣어두었습니다. 따라서 테스트하기 위해서는 a를 입력해 주세요.
