@@ -30,20 +30,20 @@ export const InnerSetting: ComponentStory<typeof Modal> = (args) => {
       <button onClick={() => setModalOpen(true)}>모달 열기</button>
       {modalOpen && (
         <Modal {...args} setIsModalOpen={setModalOpen}>
-          <div style={{ width: '500px', height: '300px', background: 'green' }}>Modal Inner</div>
+          <div style={{ width: '300px', height: '300px', background: 'green' }}>Modal Inner</div>
         </Modal>
       )}
     </Container>
   );
 };
-export const PropsSetting: ComponentStory<typeof Modal> = (args) => {
+export const BottomBorderRadiusNonWithProps: ComponentStory<typeof Modal> = (args) => {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <Container>
       <button onClick={() => setModalOpen(true)}>모달 열기</button>
       {modalOpen && (
         <CuModal {...args} setIsModalOpen={setModalOpen}>
-          <div style={{ width: '500px', height: '300px', background: 'green' }}>Modal Inner</div>
+          <div style={{ width: '300px', height: '300px', background: 'green' }}>Modal Inner</div>
         </CuModal>
       )}
     </Container>
@@ -57,7 +57,7 @@ export const OverflowModal: ComponentStory<typeof Modal> = (args) => {
       <button onClick={() => setModalOpen(true)}>모달 열기</button>
       {modalOpen && (
         <Modal {...args} setIsModalOpen={setModalOpen}>
-          <div style={{ height: '400px', width: '500px', overflow: 'auto' }}>
+          <div style={{ height: '300px', width: '300px', overflow: 'auto' }}>
             Modal Inner
             <br />
             Modal Inner
