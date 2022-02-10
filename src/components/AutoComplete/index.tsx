@@ -25,6 +25,7 @@ interface Props {
   handleSubmit: () => void;
 }
 export type matchedType = { word: string; isSelected: boolean }[];
+
 const AutoComplete = ({
   width = 300,
   cashedWordList,
@@ -113,6 +114,7 @@ const AutoComplete = ({
     if (!dropdownList.length) return;
     setShowMatched(true);
   };
+
   return (
     <Wrapper {...props}>
       <Input

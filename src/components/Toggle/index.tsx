@@ -8,8 +8,10 @@ export interface Props {
   isToggled: boolean;
   setIsToggled: Dispatch<SetStateAction<boolean>>;
 }
+
 const Toggle = ({ name, width = 200, height = 50, isToggled, setIsToggled, ...args }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
   const handleInput = useCallback(() => {
     setIsToggled((prevVal) => !prevVal);
   }, []);
