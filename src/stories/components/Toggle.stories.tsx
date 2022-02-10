@@ -13,7 +13,7 @@ export const Default: ComponentStory<typeof Toggle> = (args) => {
   return (
     <Container>
       <Toggle {...args} name="토글 테스트" isToggled={open} setIsToggled={setOpen} />
-      Toggle switch {open}
+      Toggle switch {open ? 'on' : 'off'}
     </Container>
   );
 };
@@ -23,7 +23,7 @@ export const ChangeWidth: ComponentStory<typeof Toggle> = (args) => {
   return (
     <Container>
       <Toggle {...args} name="토글 테스트" width={400} isToggled={open} setIsToggled={setOpen} />
-      Toggle switch {open}
+      Toggle switch {open ? 'on' : 'off'}
     </Container>
   );
 };
@@ -40,7 +40,7 @@ export const ChangeWidthAndHeight: ComponentStory<typeof Toggle> = (args) => {
         isToggled={open}
         setIsToggled={setOpen}
       />
-      Toggle switch {open}
+      Toggle switch {open ? 'on' : 'off'}
     </Container>
   );
 };
